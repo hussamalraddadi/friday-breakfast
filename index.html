@@ -74,23 +74,25 @@
   .btn small{ font-weight:500; opacity:.85; font-size:12px; display:block;}
   .apps .hint{ color:var(--sub); font-size:12.5px; margin-top:12px; line-height:1.7;}
 
-  /* rota (auto) */
+  /* rota + schedule */
   .rota-now{ background:var(--green-soft); border-radius:14px; padding:20px 26px; display:flex;
     align-items:center; gap:16px; flex-wrap:wrap;}
   .rota-now .rn-label{ color:var(--sub); font-size:15px;}
-  .rota-now .rn-name{ font-size:28px; font-weight:800; color:var(--green);}
-  .rota-now .rn-date{ margin-right:auto; color:var(--sub); font-size:14px;}
-  .rota-list{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
-  .rl-row{ display:flex; align-items:center; gap:8px; background:var(--panel); border-radius:30px; padding:8px 15px; font-size:15px;}
-  .rl-row .idx{ display:inline-flex; width:24px; height:24px; border-radius:50%; background:var(--gold-soft);
-    color:var(--gold); font-weight:700; font-size:12px; align-items:center; justify-content:center;}
-  .rl-row .rl-name{ font-weight:600;}
-  .rl-row.now{ background:var(--green); color:#fff;}
-  .rl-row.now .idx{ background:rgba(255,255,255,.28); color:#fff;}
-  .rl-row.next{ background:var(--gold-soft);}
-  .now-tag{ font-size:11px; background:#0f5c37; color:#fff; padding:2px 9px; border-radius:20px;}
-  .rl-row.now .now-tag{ background:rgba(255,255,255,.28);}
-  .next-tag{ font-size:11px; background:var(--gold); color:#fff; padding:2px 9px; border-radius:20px;}
+  select.pick.big{ font-size:22px; font-weight:800; color:var(--green); border:2px solid var(--green);
+    background:#fff; padding:9px 18px; border-radius:11px;}
+  .sched{ margin-top:16px; display:flex; flex-direction:column; gap:8px;}
+  .srow{ display:flex; align-items:center; gap:14px; padding:11px 16px; background:var(--panel); border-radius:12px; flex-wrap:wrap;}
+  .srow.now{ background:var(--green-soft);}
+  .sdate{ font-weight:700; color:var(--navy); min-width:135px;}
+  .now-badge{ background:var(--green); color:#fff; font-size:11px; padding:2px 10px; border-radius:20px;}
+  select.pick{ font-family:inherit; font-size:15px; font-weight:700; color:var(--navy); padding:8px 14px;
+    border-radius:9px; border:1.5px solid #d9dde3; background:#fff; cursor:pointer; outline:none;}
+  select.pick:focus{ border-color:var(--gold);}
+  .status{ font-size:12px; padding:3px 11px; border-radius:20px;}
+  .status.auto{ background:#eef1f4; color:#67707c;}
+  .status.booked{ background:var(--gold-soft); color:#7a5a2a; font-weight:700;}
+  .reset{ margin-right:auto; background:none; border:none; color:var(--sub); cursor:pointer; font-size:13px; font-family:inherit;}
+  .reset:hover{ color:var(--gold);}
 
   /* whatsapp */
   .wa{ background:var(--green-soft); border-radius:14px; padding:22px 24px;}
@@ -171,11 +173,11 @@
     <div class="note-red">القوائم <b>ساندويتشات بالعدد</b> (مو شرط بوكس) — زيدوا أو نقّصوا الأعداد كيف ما تبون. واللي معلّم بـ 📦 يوفّر بوكس جمعات جاهز لو تفضّلونه. أرشّح لكم مطعم كل أسبوع (المعلّم بـ ★) حتى ما يتكرر بسرعة، وتقدرون تختارون أي مطعم ثاني. تبون مطعم مو موجود؟ قولوا لي أضيفه.</div>
   </section>
 
-  <!-- 2. دور هذه الجمعة -->
+  <!-- 2. جدول الجمعات والمسؤول -->
   <section>
-    <div class="sec-h"><span class="n">٢</span><h2>دور هذه الجمعة</h2><p>يتقدّم واحد كل جمعة تلقائياً — نفس النتيجة لكل من يفتح الرابط</p></div>
-    <div class="rota-now" id="rotaNow"></div>
-    <div class="rota-list" id="rotaList"></div>
+    <div class="sec-h"><span class="n">٢</span><h2>جدول الجمعات والمسؤول</h2><p>بدون دور تلقائي — أي واحد يختار المسؤول لأي جمعة من القائمة المنسدلة</p></div>
+    <div class="sched" id="sched"></div>
+    <div class="note-red">كل جمعة تبدأ فاضية (— اختر المسؤول —)، وأي واحد يختار الاسم اللي يبيه لأي جمعة، حتى هذه الجمعة. الأسماء والمطاعم ثابتة بالصفحة ونمشي عليها. <b>ملاحظة:</b> الاختيار ينحفظ على نفس الجهاز فقط (بدون قاعدة بيانات).</div>
   </section>
 
   <!-- 3. رسالة واتساب -->
@@ -337,20 +339,27 @@ function pick(id){ current=RESTAURANTS.find(r=>r.id===id); document.getElementBy
 const NAMES = ['حسن','حسام','عبدالله','محمد','عمر','علي','أنس'];
 const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 function upcomingFriday(d){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); const diff=(5-x.getDay()+7)%7; x.setDate(x.getDate()+diff); return x; }
-const REF = upcomingFriday(new Date(2026,6,3)); // نقطة البداية: حسن أول جمعة
-function dutyIndex(){ const t=upcomingFriday(new Date()); const w=Math.round((t-REF)/6048e5); return ((w%NAMES.length)+NAMES.length)%NAMES.length; }
-function fridayLabel(){ const t=upcomingFriday(new Date()); return `جمعة ${t.getDate()} ${MONTHS[t.getMonth()]}`; }
-function currentName(){ return NAMES[dutyIndex()]; }
+const BKEY='fb_picks_v1';
+let picks={}; try{ picks=JSON.parse(localStorage.getItem(BKEY))||{}; }catch(e){}
+function dkey(d){ return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function nextFridays(n){ const f=upcomingFriday(new Date()); const a=[]; for(let i=0;i<n;i++){ a.push(new Date(f.getFullYear(),f.getMonth(),f.getDate()+i*7)); } return a; }
+function friLabel(d){ return `جمعة ${d.getDate()} ${MONTHS[d.getMonth()]}`; }
+function currentName(){ return picks[dkey(nextFridays(1)[0])] || '______'; }
 function renderRota(){
-  const idx=dutyIndex(), nxt=(idx+1)%NAMES.length;
-  document.getElementById('rotaNow').innerHTML =
-    `<span class="rn-label">مسؤول فطور هذه الجمعة</span><span class="rn-name">${NAMES[idx]}</span><span class="rn-date">${fridayLabel()}</span>`;
-  document.getElementById('rotaList').innerHTML = NAMES.map((n,i)=>{
-    const cls = i===idx?'now':(i===nxt?'next':'');
-    const tag = i===idx?'<span class="now-tag">هالجمعة</span>':(i===nxt?'<span class="next-tag">الجاية</span>':'');
-    return `<div class="rl-row ${cls}"><span class="idx">${i+1}</span><span class="rl-name">${n}</span>${tag}</div>`;
+  const fris=nextFridays(8);
+  document.getElementById('sched').innerHTML = fris.map((d,i)=>{
+    const k=dkey(d), chosen=picks[k]||'';
+    const opts=`<option value="" ${chosen===''?'selected':''}>— اختر المسؤول —</option>`+
+      NAMES.map(n=>`<option ${n===chosen?'selected':''}>${n}</option>`).join('');
+    return `<div class="srow ${i===0?'now':''}">
+      <span class="sdate">${friLabel(d)}</span>
+      ${i===0?'<span class="now-badge">هالجمعة</span>':''}
+      <select class="pick ${i===0?'big':''}" data-k="${k}" onchange="pickPerson(this.dataset.k,this.value)">${opts}</select>
+      ${chosen?`<span class="status booked">${chosen}</span><button class="reset" onclick="pickPerson('${k}','')">↺ مسح</button>`:'<span class="status auto">لم يُختر بعد</span>'}
+    </div>`;
   }).join('');
 }
+function pickPerson(k,name){ if(name){ picks[k]=name; } else { delete picks[k]; } localStorage.setItem(BKEY,JSON.stringify(picks)); renderRota(); buildWA(current); }
 function flash(id){ const el=document.getElementById(id); el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1600); }
 
 /* ===== whatsapp ===== */
