@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>المنسّق الذكي · البديل عن البشر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ color-scheme: light only;
+    --ink:#1c2430; --sub:#5b6675; --line:#eceef2;
+    --gold:#b8894a; --gold-soft:#f4ead9;
+    --navy:#1f2c3d; --green:#1f7a4d; --green-soft:#e7f4ec;
+    --bg:#ffffff; --panel:#fbfaf8;
+  }
+  html,body{background:#fff;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Tajawal',system-ui,'Segoe UI',sans-serif; color:var(--ink);
+    background:#fff; line-height:1.8; -webkit-font-smoothing:antialiased;}
+  .wrap{ max-width:1120px; margin:0 auto; padding:34px 30px 60px; }
+
+  .head{ display:flex; align-items:center; justify-content:space-between;
+    gap:20px; padding-bottom:20px; border-bottom:2px solid var(--gold); margin-bottom:8px;}
+  .brand{ display:flex; align-items:center; gap:18px;}
+  .logo{ width:74px; height:74px; flex:0 0 auto; filter:drop-shadow(0 3px 8px rgba(31,44,61,.22));}
+  .logo svg{ width:100%; height:100%; display:block;}
+  .head h1{ font-size:33px; font-weight:800; color:var(--navy); line-height:1.15;}
+  .head .tag{ color:var(--sub); font-size:15px; margin-top:4px;}
+  .head .mark{ text-align:left; color:var(--gold); font-weight:700; font-size:15px; white-space:nowrap;}
+  .head .mark small{ display:block; color:var(--sub); font-weight:500; font-size:12px;}
+
+  section{ margin-top:34px; }
+  .sec-h{ display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .sec-h .n{ width:30px; height:30px; border-radius:50%; background:var(--navy); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex:0 0 auto;}
+  .sec-h h2{ font-size:21px; font-weight:700; color:var(--navy);}
+  .sec-h p{ color:var(--sub); font-size:14px; margin-right:2px;}
+
+  /* dropdown */
+  .picker{ display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+  select#rest{ font-family:inherit; font-size:17px; font-weight:700; color:var(--navy);
+    padding:14px 18px; border-radius:12px; border:2px solid var(--gold); background:var(--gold-soft);
+    min-width:340px; cursor:pointer; outline:none;}
+  .reco-flag{ background:var(--green); color:#fff; font-size:13px; font-weight:700; padding:6px 14px; border-radius:30px;}
+
+  /* selected restaurant panel */
+  .panel{ margin-top:20px; background:var(--panel); border-radius:16px; padding:26px 28px; }
+  .panel .p-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;}
+  .panel h3{ font-size:24px; font-weight:800; color:var(--navy);}
+  .panel .meta{ color:var(--sub); font-size:14px; margin-top:3px;}
+  .panel .rate{ font-size:14px; font-weight:700; color:var(--green); white-space:nowrap;}
+  .panel .rate.na{ color:#9aa3af; font-weight:500;}
+  .panel .box-tag{ display:inline-block; background:var(--gold-soft); color:#7a5a2a; font-weight:700;
+    font-size:13px; padding:5px 14px; border-radius:20px; margin-top:12px;}
+
+  .cols{ display:grid; grid-template-columns:1.1fr .9fr; gap:26px; margin-top:20px;}
+  @media (max-width:780px){ .cols{grid-template-columns:1fr;} }
+
+  .menu h5,.apps h5{ font-size:15px; color:var(--gold); font-weight:700; margin-bottom:12px;}
+  .menu ul{ list-style:none;}
+  .menu li{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:15px;}
+  .menu li:last-child{ border-bottom:none;}
+  .menu li .q{ background:var(--navy); color:#fff; font-weight:700; font-size:13px;
+    min-width:36px; text-align:center; padding:3px 8px; border-radius:8px;}
+
+  .apps .btns{ display:flex; flex-direction:column; gap:10px;}
+  .btn{ background:var(--navy); color:#fff; text-decoration:none; font-weight:700; font-size:15px;
+    padding:13px 20px; border-radius:12px; border:none; cursor:pointer; transition:.15s; text-align:center; display:block;}
+  .btn:hover{ opacity:.9;}
+  .btn.nj{ background:#127a5a;} .btn.hs{ background:#c0392b;} .btn.jz{ background:#8a5a1a;}
+  .btn.g{ background:var(--green);} .btn.o{ background:var(--gold);}
+  .btn small{ font-weight:500; opacity:.85; font-size:12px; display:block;}
+  .apps .hint{ color:var(--sub); font-size:12.5px; margin-top:12px; line-height:1.7;}
+
+  /* rota (auto) */
+  .rota-now{ background:var(--green-soft); border-radius:14px; padding:20px 26px; display:flex;
+    align-items:center; gap:16px; flex-wrap:wrap;}
+  .rota-now .rn-label{ color:var(--sub); font-size:15px;}
+  .rota-now .rn-name{ font-size:28px; font-weight:800; color:var(--green);}
+  .rota-now .rn-date{ margin-right:auto; color:var(--sub); font-size:14px;}
+  .rota-list{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
+  .rl-row{ display:flex; align-items:center; gap:8px; background:var(--panel); border-radius:30px; padding:8px 15px; font-size:15px;}
+  .rl-row .idx{ display:inline-flex; width:24px; height:24px; border-radius:50%; background:var(--gold-soft);
+    color:var(--gold); font-weight:700; font-size:12px; align-items:center; justify-content:center;}
+  .rl-row .rl-name{ font-weight:600;}
+  .rl-row.now{ background:var(--green); color:#fff;}
+  .rl-row.now .idx{ background:rgba(255,255,255,.28); color:#fff;}
+  .rl-row.next{ background:var(--gold-soft);}
+  .now-tag{ font-size:11px; background:#0f5c37; color:#fff; padding:2px 9px; border-radius:20px;}
+  .rl-row.now .now-tag{ background:rgba(255,255,255,.28);}
+  .next-tag{ font-size:11px; background:var(--gold); color:#fff; padding:2px 9px; border-radius:20px;}
+
+  /* whatsapp */
+  .wa{ background:var(--green-soft); border-radius:14px; padding:22px 24px;}
+  .wa textarea{ width:100%; font-family:inherit; font-size:14.5px; line-height:1.9; color:var(--ink);
+    border:1px solid #cfe3d7; border-radius:10px; padding:16px; background:#fff; min-height:250px; resize:vertical;}
+  .wa .row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+  .copied{ color:var(--green); font-weight:700; font-size:14px; align-self:center; opacity:0; transition:.2s;}
+  .copied.show{ opacity:1;}
+
+  .note-red{ background:#fff7f4; border-radius:12px; padding:14px 18px; font-size:14px; color:#8a4a3a; margin-top:16px;}
+  .foot-note{ margin-top:48px; padding-top:18px; border-top:1px solid var(--line); color:var(--sub); font-size:13px; line-height:1.9;}
+
+  @media print{
+    @page{ size:A4 landscape; margin:14mm; }
+    body{background:#fff;} .wrap{padding:0;}
+    .btn,.rota-ctrl,.wa .row,select#rest{ display:none !important;}
+    section{ break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="brand">
+      <span class="logo">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="المنسّق الذكي">
+          <circle cx="50" cy="50" r="49" fill="#1f2c3d"/>
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#b8894a" stroke-width="2.4"/>
+          <!-- collar -->
+          <path d="M28,94 Q50,76 72,94 Z" fill="#243448"/>
+          <path d="M42,80 L50,92 L58,80 L52,78 L50,83 L48,78 Z" fill="#f4ead9"/>
+          <circle cx="50" cy="86" r="1.6" fill="#b8894a"/>
+          <!-- face -->
+          <ellipse cx="50" cy="51" rx="22" ry="25" fill="#eac79f"/>
+          <circle cx="28" cy="53" r="3.6" fill="#eac79f"/>
+          <circle cx="72" cy="53" r="3.6" fill="#eac79f"/>
+          <!-- hair -->
+          <path d="M27,45 Q26,23 50,22 Q74,23 73,45 Q70,35 62,32 Q56,30 50,31 Q40,31 34,35 Q29,38 27,45 Z" fill="#2a1d12"/>
+          <!-- smart raised brows -->
+          <path d="M33,43 Q40,40 46,43" stroke="#2a1d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <path d="M55,40 Q61,37 68,41" stroke="#2a1d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <!-- eyes -->
+          <circle cx="40" cy="49" r="2.7" fill="#1c2430"/>
+          <circle cx="61" cy="48" r="2.7" fill="#1c2430"/>
+          <circle cx="41.1" cy="48" r=".9" fill="#fff"/>
+          <circle cx="62.1" cy="47" r=".9" fill="#fff"/>
+          <!-- nose -->
+          <path d="M50,51 L47.5,58 Q50,60.5 52.5,58" stroke="#cf9d6c" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+          <!-- italian handlebar mustache -->
+          <path d="M50,63
+                   C44,60 37,59 32,60 C27.5,61 26,57.5 28.5,55.5 C29.5,58 40,59 50,62
+                   C60,59 70.5,58 71.5,55.5 C74,57.5 72.5,61 68,60 C63,59 56,60 50,63 Z" fill="#241a10"/>
+          <path d="M28.5,55.5 Q24,53 26,49.5" stroke="#241a10" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <path d="M71.5,55.5 Q76,53 74,49.5" stroke="#241a10" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <!-- confident smile -->
+          <path d="M45,67.5 Q50,70.5 55,67.5" stroke="#9c6444" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- spark of intelligence -->
+          <path d="M50,10 l1.4,3.4 3.6,.3 -2.8,2.3 .9,3.5 -3.1,-1.9 -3.1,1.9 .9,-3.5 -2.8,-2.3 3.6,-.3 Z" fill="#b8894a"/>
+        </svg>
+      </span>
+      <div>
+        <h1>المنسّق الذكي</h1>
+        <div class="tag">البديل عن البشر · تنسيق فطور الجمعة — شرق الرياض (الروضة وما جاورها)</div>
+      </div>
+    </div>
+    <div class="mark">مساعد الفطور<small>اختر المطعم · القائمة تجهز · التطبيق يفتح</small></div>
+  </div>
+
+  <!-- 1. اختيار المطعم -->
+  <section>
+    <div class="sec-h"><span class="n">١</span><h2>اختر مطعم هذه الجمعة</h2><p>اختر من القائمة، وكل شي يتجهّز تحت تلقائياً</p></div>
+    <div class="picker">
+      <select id="rest" onchange="pick(this.value)"></select>
+      <span class="reco-flag" id="recoFlag">★ توصيتي</span>
+    </div>
+    <div class="panel" id="panel"><!-- injected --></div>
+    <div class="note-red">القوائم <b>ساندويتشات بالعدد</b> (مو شرط بوكس) — زيدوا أو نقّصوا الأعداد كيف ما تبون. واللي معلّم بـ 📦 يوفّر بوكس جمعات جاهز لو تفضّلونه. أرشّح لكم مطعم كل أسبوع (المعلّم بـ ★) حتى ما يتكرر بسرعة، وتقدرون تختارون أي مطعم ثاني. تبون مطعم مو موجود؟ قولوا لي أضيفه.</div>
+  </section>
+
+  <!-- 2. دور هذه الجمعة -->
+  <section>
+    <div class="sec-h"><span class="n">٢</span><h2>دور هذه الجمعة</h2><p>يتقدّم واحد كل جمعة تلقائياً — نفس النتيجة لكل من يفتح الرابط</p></div>
+    <div class="rota-now" id="rotaNow"></div>
+    <div class="rota-list" id="rotaList"></div>
+  </section>
+
+  <!-- 3. رسالة واتساب -->
+  <section>
+    <div class="sec-h"><span class="n">٣</span><h2>رسالة واتساب جاهزة</h2><p>تتعبّى تلقائياً بالمطعم والقائمة والمسؤول</p></div>
+    <div class="wa">
+      <textarea id="waText"></textarea>
+      <div class="row">
+        <button class="btn g" style="display:inline-block;width:auto;" onclick="copyWA()">📋 نسخ الرسالة</button>
+        <a class="btn" style="display:inline-block;width:auto;" id="waLink" href="#" target="_blank">إرسال عبر واتساب ↗</a>
+        <span id="waCopied" class="copied">تم النسخ ✓</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot-note">
+    <b>الدورة كل جمعة:</b> (١) اختر المطعم من القائمة ← تنزل قائمة الطلب المقترحة. (٢) اضغط «التالي في الدور» يطلع مسؤول هالجمعة. (٣) انسخ رسالة واتساب للمجموعة. (٤) المسؤول يضغط زر التطبيق فيفتح صفحة المطعم، يسجّل الطلب ويكمّله ويدفع. وهنا ينتهي دور المساعد.<br>
+    <b>ملاحظة صريحة:</b> التطبيقات (نينجا/جاهز/هنقرستيشن) ما تسمح بالطلب والدفع آلياً نيابةً عنكم — الطلب النهائي داخل التطبيق بيد المسؤول. الأسعار غير مذكورة لأنها تتغيّر؛ تأكّدوا داخل التطبيق. التقييمات المؤكّدة فقط، والباقي «بدون تقييم» بدل اختراع رقم.<br>
+    <span style="color:#9aa3af;">المصادر: هنقرستيشن · نينجا · منيو السعودية · تريب أدفايزر.</span>
+  </div>
+
+</div>
+
+<script>
+/* ===== بيانات المطاعم ===== */
+const RESTAURANTS = [
+  { id:'abujbara', name:'أبو جبارة', area:'الروضة', group:'الروضة', rating:'3.4 تريب أدفايزر', reco:true,
+    box:'بوكس جمعات ٢٤ (جاهز للمجموعات)',
+    type:'ساندويتشات شعبية: فول، فلافل، كبدة غنم، بيض بجبنة نابلسية، شكشوكة، مقلقل.',
+    apps:[ {k:'nj',t:'نينجا — بوكس جمعات ٢٤',u:'https://ananinja.com/sa/ar/restaurants/kyan-10093/24-jamaat-box-137062'},
+           {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/abu-jbara/riyadh/jarir/16795'} ],
+    menu:[ ['×5','ساندويتش كبدة غنم'],['×5','ساندويتش بيض بجبنة نابلسية'],['×4','ساندويتش فلافل'],
+           ['×4','ساندويتش فول'],['×3','ساندويتش شكشوكة'],['×12','شاي / قهوة'] ] },
+
+  { id:'lammah', name:'لمة فطور', area:'الروضة', group:'الروضة', rating:'3.7 هنقرستيشن',
+    box:'بوكس اللمة + الفطيرة · فطور الجمعات (معلن للمجموعات)',
+    type:'فول، فلافل، شكشوكة + فطائر متنوعة. مصمّم للّمات.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D8%B1%D9%88%D8%B6%D8%A9/177551'} ],
+    menu:[ ['×6','ساندويتش فول'],['×6','ساندويتش فلافل'],['×4','ساندويتش شكشوكة'],
+           ['×6','فطيرة منوّعة'],['×12','شاي / قهوة'] ] },
+
+  { id:'faris', name:'فطور فارس', area:'الروضة', group:'الروضة', rating:'3.9 هنقرستيشن',
+    box:'صناديق جماعية معلنة (جمعة الأصدقاء · جمعة المونديال · صندوق تشجيع)',
+    type:'فطور سعودي وساندويتشات، صناديق مخصّصة لعدد الأشخاص.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D8%B1%D9%88%D8%B6%D8%A9/40381'} ],
+    menu:[ ['×6','ساندويتش فطور سعودي'],['×6','ساندويتش فلافل'],['×5','ساندويتش بيض'],['×12','شاي / قهوة'] ] },
+
+  { id:'mamanoura', name:'ماما نورة', area:'الروضة', group:'الروضة', rating:'4.2 منيو السعودية',
+    box:null, note:'لو ما فتح الرابط مباشرة، افتح تطبيق هنقرستيشن وحدّد موقعك في الروضة ثم ابحث «ماما نورة».',
+    type:'ساندويتشات فطور، فلافل، فطائر، عصائر. يبدأ الفطور ٦ صباحاً.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/mama-noura-3/riyadh/nur/56841'},
+           {k:'nj',t:'نينجا',u:'https://ananinja.com/sa/ar/restaurants/mama-noura-1674'},
+           {k:'jz',t:'كل التطبيقات (Linktree الرسمي)',u:'https://linktr.ee/mamanoura'} ],
+    menu:[ ['×6','ساندويتش فلافل'],['×6','ساندويتش بيض'],['×5','ساندويتش شاورما فطور'],
+           ['×4','ساندويتش فول'],['×12','عصير / مشروب'] ] },
+
+  { id:'baytfatayer', name:'بيت الفطاير', area:'الروضة', group:'الروضة', rating:'4.0 هنقرستيشن',
+    box:null,
+    type:'فطائر بحشوات (جبن/لحم/سبانخ/لبنة) + ساندويتشات محشوة (دجاج/تونة) + بيتزا.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D8%B1%D9%88%D8%B6%D8%A9/4069'} ],
+    menu:[ ['×6','فطيرة جبن'],['×4','فطيرة لحم'],['×4','فطيرة سبانخ'],
+           ['×8','ساندويتش محشو (دجاج/تونة/لبنة)'],['×12','مشروب'] ] },
+
+  { id:'furn', name:'فرن الضيعة', area:'الروضة + اليرموك', group:'الروضة', rating:null,
+    box:'مكس بوكس ساندويش · بوكسات جمعات · جمعات بيتزا',
+    type:'ساندويتشات ومعجنات وفطائر وبيتزا، بوكسات جمعات متنوعة.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83/4765'},
+           {k:'nj',t:'الموقع الرسمي (بوكسات الجمعات)',u:'https://furnaldayaa.my.taker.io/menu/category/17?language=ar'} ],
+    menu:[ ['×8','ساندويتش منوّع (فول/فلافل/بيض)'],['×6','فطيرة منوّعة'],['×4','قطعة بيتزا فطور'],['×12','مشروب'] ] },
+
+  { id:'maasoub', name:'معصوب العاصمة', area:'الروضة', group:'الروضة', rating:'4.2 هنقرستيشن',
+    box:null,
+    type:'معصوب + فطور سعودي + معجنات.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/riyadh/al-rawdah/58884'} ],
+    menu:[ ['×10','معصوب منوّع (موز/عسل/قشطة)'],['×6','ساندويتش فطور سعودي'],['×12','مشروب'] ] },
+
+  { id:'fawwal', name:'فوال الأفراح', area:'الروضة', group:'الروضة', rating:null,
+    box:null,
+    type:'فوّالة متخصّصة: فول بأنواعه، طعمية/فلافل، صحون فطور شعبي.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/qc/16102/%D9%81%D9%88%D8%A7%D9%84-%D8%A7%D9%84%D8%A3%D9%81%D8%B1%D8%A7%D8%AD/branch/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6~%D8%A7%D9%84%D9%82%D8%AF%D8%B3~36353'} ],
+    menu:[ ['×8','ساندويتش فول منوّع'],['×6','ساندويتش فلافل'],['×4','ساندويتش بيض'],['×12','شاي'] ] },
+
+  { id:'saada', name:'دوار السعادة', area:'اليرموك', group:'اليرموك والجوار', rating:null,
+    box:'بوكس السعادة · بوكس النواشف (للجمعات)',
+    type:'فطور شعبي بقهوة طازجة وخبز مخبوز.',
+    apps:[ {k:'nj',t:'نينجا',u:'https://ananinja.com/sa/ar/restaurants/dawar-alsaada-11804'} ],
+    menu:[ ['×6','ساندويتش فول'],['×6','ساندويتش فلافل'],['×4','ساندويتش بيض'],['×12','قهوة طازجة'] ] },
+
+  { id:'shawarma', name:'بيت الشاورما', area:'اليرموك / قرطبة / الروضة', group:'اليرموك والجوار', rating:'4.1 هنقرستيشن',
+    box:'بوكسات جمعات (فطور سعودي + شامي متوفّر)',
+    type:'فطور سعودي وفطور شامي + شاورما وساندويتشات.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83/9882'} ],
+    menu:[ ['×6','ساندويتش فطور سعودي'],['×5','ساندويتش فطور شامي'],['×5','ساندويتش شاورما'],['×12','مشروب'] ] },
+
+  { id:'reefiyah', name:'فطائر ولقيمات ريفية', area:'اليرموك', group:'اليرموك والجوار', rating:'4.1 هنقرستيشن',
+    box:'بوكس الجمعات (معلن للمناسبات)',
+    type:'فطائر بحشوات (فلافل/دجاج/أجبان) + لقيمات + بيتزا.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83/68245'} ],
+    menu:[ ['×10','فطيرة منوّعة (فلافل/دجاج/أجبان)'],['×3','صحن لقيمات'],['×12','مشروب'] ] },
+
+  { id:'aslfatayer', name:'أصل الفطائر', area:'اليرموك', group:'اليرموك والجوار', rating:'3.9 هنقرستيشن',
+    box:'بوكس فطاير بالمشويات · فطائر مشكّل كبير',
+    type:'فطائر متنوعة + بيتزا + مشويات عربية.',
+    apps:[ {k:'hs',t:'هنقرستيشن',u:'https://hungerstation.com/sa-ar/restaurant/%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6/%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83/18558'} ],
+    menu:[ ['×10','فطيرة مشكّلة'],['×2','صحن مشويات (كباب/شيش)'],['×12','مشروب'] ] },
+];
+
+/* ===== طلبات خاصة ثابتة (تُضاف لأي مطعم) ===== */
+const EXTRAS = [
+  { who:'حسن', item:'ساندويتش زعتر', q:'×1' },
+  { who:'عبدالله وأسماء', item:'ساندويتش فلافل', q:'×2' },
+];
+function menuWithExtras(r){
+  return r.menu.concat(EXTRAS.map(e=>[e.q, `${e.item} — لـ${e.who}`]));
+}
+
+/* ===== render selected restaurant ===== */
+const APP_LABEL={nj:'نينجا',hs:'هنقرستيشن',jz:'جاهز'};
+let current = RESTAURANTS.find(r=>r.reco) || RESTAURANTS[0];
+
+function buildSelect(){
+  const sel=document.getElementById('rest');
+  const groups={};
+  RESTAURANTS.forEach(r=>{ (groups[r.group]=groups[r.group]||[]).push(r); });
+  sel.innerHTML='';
+  Object.keys(groups).forEach(g=>{
+    const og=document.createElement('optgroup'); og.label='— '+g+' —';
+    groups[g].forEach(r=>{
+      const o=document.createElement('option'); o.value=r.id;
+      o.textContent=(r.reco?'★ ':'')+r.name+' · '+r.area;
+      if(r.id===current.id) o.selected=true;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+}
+function renderPanel(r){
+  const rateHtml = r.rating ? `<div class="rate">★ ${r.rating}</div>` : `<div class="rate na">— بدون تقييم مؤكّد</div>`;
+  const boxHtml = r.box ? `<span class="box-tag">📦 ${r.box}</span>` : '';
+  const menuHtml = menuWithExtras(r).map(m=>`<li><span class="q">${m[0]}</span> ${m[1]}</li>`).join('');
+  const appsHtml = r.apps.map(a=>`<a class="btn ${a.k}" href="${a.u}" target="_blank">${a.t} ↗<small>يفتح صفحة المطعم في التطبيق</small></a>`).join('');
+  const noteHtml = r.note ? `<div class="hint">⚠️ ${r.note}</div>` : '';
+  document.getElementById('panel').innerHTML = `
+    <div class="p-top">
+      <div><h3>${r.name}</h3><div class="meta">${r.area} · ${r.type}</div>${boxHtml}</div>
+      ${rateHtml}
+    </div>
+    <div class="cols">
+      <div class="menu"><h5>قائمة الطلب المقترحة (ساندويتشات بالعدد · +١٠ أشخاص)</h5><ul>${menuHtml}</ul>
+        <div class="hint" style="color:#5b6675;font-size:12.5px;margin-top:10px;">الكميات تقديرية للتنويع — زيدوا أو نقّصوا حسب العدد والشهية.</div></div>
+      <div class="apps"><h5>افتح المطعم واطلب</h5><div class="btns">${appsHtml}</div>${noteHtml}
+        <div class="hint">اضغط الزر ← تفتح صفحة المطعم في التطبيق ← سجّل الطلب المقترح ← كمّل وادفع.</div></div>
+    </div>`;
+  buildWA(r);
+}
+function pick(id){ current=RESTAURANTS.find(r=>r.id===id); document.getElementById('recoFlag').style.display=current.reco?'inline-block':'none'; renderPanel(current); }
+
+/* ===== الدور: تلقائي حسب أسبوع السنة (مشترك للكل بلا قاعدة بيانات) ===== */
+const NAMES = ['حسن','حسام','عبدالله','محمد','عمر','علي','أنس'];
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function upcomingFriday(d){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); const diff=(5-x.getDay()+7)%7; x.setDate(x.getDate()+diff); return x; }
+const REF = upcomingFriday(new Date(2026,6,3)); // نقطة البداية: حسن أول جمعة
+function dutyIndex(){ const t=upcomingFriday(new Date()); const w=Math.round((t-REF)/6048e5); return ((w%NAMES.length)+NAMES.length)%NAMES.length; }
+function fridayLabel(){ const t=upcomingFriday(new Date()); return `جمعة ${t.getDate()} ${MONTHS[t.getMonth()]}`; }
+function currentName(){ return NAMES[dutyIndex()]; }
+function renderRota(){
+  const idx=dutyIndex(), nxt=(idx+1)%NAMES.length;
+  document.getElementById('rotaNow').innerHTML =
+    `<span class="rn-label">مسؤول فطور هذه الجمعة</span><span class="rn-name">${NAMES[idx]}</span><span class="rn-date">${fridayLabel()}</span>`;
+  document.getElementById('rotaList').innerHTML = NAMES.map((n,i)=>{
+    const cls = i===idx?'now':(i===nxt?'next':'');
+    const tag = i===idx?'<span class="now-tag">هالجمعة</span>':(i===nxt?'<span class="next-tag">الجاية</span>':'');
+    return `<div class="rl-row ${cls}"><span class="idx">${i+1}</span><span class="rl-name">${n}</span>${tag}</div>`;
+  }).join('');
+}
+function flash(id){ const el=document.getElementById(id); el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1600); }
+
+/* ===== whatsapp ===== */
+function buildWA(r){
+  const app = r.apps[0] ? APP_LABEL[r.apps[0].k] : 'التطبيق';
+  const lines = menuWithExtras(r).map(m=>`• ${m[0].replace('×','')} ${m[1]}`).join('\n');
+  const txt = `🌅 فطور الجمعة — بإذن الله\n\n📍 مطعم هذا الأسبوع: ${r.name} (${r.area})\n👤 المسؤول عن الطلب: ${currentName()}\n📱 التطبيق: ${app}\n\n📝 الطلب المقترح (ساندويتشات بالعدد):\n${lines}${r.box?'\n\n📦 بديل جاهز لو تفضّلونه: '+r.box:''}\n\n⏰ نطلب مباشرة بعد صلاة الجمعة عشان يوصل بسرعة.\nمين يبي إضافة أو تعديل يكتب قبل الخميس المساء 🙏`;
+  const area=document.getElementById('waText'); area.value=txt;
+  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent(txt);
+}
+document.getElementById('waText').addEventListener('input',e=>{
+  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent(e.target.value);
+});
+function copyWA(){ navigator.clipboard.writeText(document.getElementById('waText').value).then(()=>flash('waCopied')); }
+
+/* ===== init ===== */
+buildSelect(); renderPanel(current); renderRota();
+</script>
+</body>
+</html>
